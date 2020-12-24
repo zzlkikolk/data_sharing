@@ -1,0 +1,119 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.SeiProjectDao">
+    <select id="getSeiProject" resultType="com.bean.SeiProject">
+        SELECT
+                      ID,
+            PROJECT_NAME,
+            COUNTRY_CODE,
+            COMPANY_NAME,
+            INDUSTRY_TYPE,
+            INDUSTRY_PROJECT_TYPE,
+            SUPPORT_TYPE,
+            FINANCIAL_EQUITY_INVEST_AMOUNT,
+            BEGIN_DATE,
+            END_DATE,
+            PROJECT_INTRODUCTION,
+            PROJRCT_BUILD_AIM,
+            PROJECT_CONTENT,
+            LOAN_DEADLINE,
+            TOTAL_INVEST,
+            APPLY_FUND,
+            APPROVAL_FUND,
+            REVIEW_SCORE,
+            LOAN_AMOUNT,
+            LOAN_AND_GUARANTEE,
+            APPROVED_LOAN_INTEREST,
+            APPROVED_GUARANTEE_FEE,
+            BANK_COMMITMENT_FLAG,
+            FUNDS_APPLY_REPORT,
+            SUPPORT_BATCH,
+            ACCEPT_FLAG,
+            APPLY_YEAR,
+            CREATE_TIME,
+            DECODE(UPDATETIME,NULL,CREATE_TIME,UPDATETIME) UPDATETIME
+            FROM WXB.SEI_PROJECT
+            <where>
+            <!--
+              <choose>
+                <when test='country_code!=null and country_code!=" "'>
+                    AND COUNTRY_CODE LIKE CONCAT('%',#{country_code},'%')
+                </when>
+                <when test='project_name!=null and project_name!=" "'>
+                    AND PROJECT_NAME like CONCAT('%',#{project_name},'%' )
+                </when>
+                <when test='start_time!=null and end_time!=null and start_time!="" and end_time!=""'>
+                    AND (CREATE_TIME BETWEEN #{start_time} and #{end_time})
+                    OR (UPDATETIME BETWEEN #{strat_time} and #{end_time})
+                </when>
+                <otherwise>
+                    AND 0=1
+                </otherwise>
+              </choose> -->
+                <choose>
+                    <when test='todaytime!=null and todaytime!=" "'>
+                    AND DATA_FLAG!=3 AND CREATE_TIME   <![CDATA[ >= ]]> #{todaytime} ORDER BY CREATE_TIME
+                    </when>
+                    <otherwise>
+                        AND 0=1
+                    </otherwise>
+                </choose>
+            </where>
+    </select>
+    <select id="getCount" resultType="int">
+        SELECT COUNT(1) FROM WXB.SEI_PROJECT WHERE DATA_FLAG!=3
+    </select>
+    <select id="getSeiProjectByArgs" resultType="com.bean.SeiProject">
+                SELECT
+                      ID,
+            PROJECT_NAME,
+            COUNTRY_CODE,
+            COMPANY_NAME,
+            INDUSTRY_TYPE,
+            INDUSTRY_PROJECT_TYPE,
+            SUPPORT_TYPE,
+            FINANCIAL_EQUITY_INVEST_AMOUNT,
+            BEGIN_DATE,
+            END_DATE,
+            PROJECT_INTRODUCTION,
+            PROJRCT_BUILD_AIM,
+            PROJECT_CONTENT,
+            LOAN_DEADLINE,
+            TOTAL_INVEST,
+            APPLY_FUND,
+            APPROVAL_FUND,
+            REVIEW_SCORE,
+            LOAN_AMOUNT,
+            LOAN_AND_GUARANTEE,
+            APPROVED_LOAN_INTEREST,
+            APPROVED_GUARANTEE_FEE,
+            BANK_COMMITMENT_FLAG,
+            FUNDS_APPLY_REPORT,
+            SUPPORT_BATCH,
+            ACCEPT_FLAG,
+            APPLY_YEAR,
+            CREATE_TIME,
+            DECODE(UPDATETIME,NULL,CREATE_TIME,UPDATETIME) UPDATETIME
+            FROM WXB.SEI_PROJECT
+            <where>
+                <choose>
+                    <when test="projectName!=null">
+                        AND  PROJECT_NAME LIKE CONCAT('%',#{projectName},'%')   AND DATA_FLAG!=3
+                        <if test='applyYear!=0 and applyYear!=""'>
+                            AND APPLY_YEAR=#{applyYear}
+                        </if>
+                    </when>
+                    <when test="applyYear!=0">
+                        AND APPLY_YEAR=#{applyYear} AND DATA_FLAG!=3
+                        <if test="projectName!=null">
+                            AND  PROJECT_NAME LIKE CONCAT('%',#{projectName},'%')
+                        </if>
+                    </when>
+                    <otherwise>
+                        AND 0=1
+                    </otherwise>
+                </choose>
+            </where>
+    </select>
+</mapper>    

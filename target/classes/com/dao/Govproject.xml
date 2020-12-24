@@ -1,0 +1,70 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.GovprojectDao">
+    <select id="getObjectByCode" resultType="com.bean.Govproject">
+        select ID,PROJECT_NAME,COUNTRY_CODE,TOTAL_INVEST,ADDRESS_CODE,
+          COMPANY_NAME,ADDRESS_DETAIL,PROJECT_CONTENT,PROJECT_NECESSARY,INDUSTRY_CODE
+          ,BEGIN_DATE,END_DATE,CREATE_TIME from WXB.GOVERNMENT_PROJECT
+          <where>
+          <!--
+            <choose>
+              <when test='country_code!=null and country_code!=""'>
+                  AND COUNTRY_CODE LIKE CONCAT('%',#{country_code},'%')
+              </when>
+              <when test='project_name!=null and project_name!=""'>
+                  AND PROJECT_NAME LIKE CONCAT('%',#{project_name,jdbcType=VARCHAR},'%')
+              </when>
+              <when test='start_time!=null and end_time!=null and start_time!="" and end_time!=""'>
+                  AND CREATE_TIME BETWEEN #{start_time} AND #{end_time}
+              </when>
+              <otherwise>
+                  AND 0=1
+              </otherwise>
+            </choose> -->
+              <choose>
+                  <when test='todaytime!=null and todaytime!=" "'>
+                      AND CREATE_TIME   <![CDATA[ >= ]]> #{todaytime} ORDER BY CREATE_TIME
+                  </when>
+                  <otherwise>
+                      AND 0=1
+                  </otherwise>
+              </choose>
+          </where>
+    </select>
+    <select id="getCount" resultType="int">
+        SELECT COUNT(1) FROM WXB.GOVERNMENT_PROJECT
+    </select>
+    <select id="getObjectByArgs" resultType="com.bean.Govproject">
+          SELECT ID,PROJECT_NAME,COUNTRY_CODE,TOTAL_INVEST,ADDRESS_CODE,
+          COMPANY_NAME,ADDRESS_DETAIL,PROJECT_CONTENT,PROJECT_NECESSARY,INDUSTRY_CODE
+          ,BEGIN_DATE,END_DATE,CREATE_TIME from WXB.GOVERNMENT_PROJECT
+          <where>
+              <choose>
+                  <when test='projectName!=null and projectName!=""'>
+                      <choose>
+                          <when test='companyName!=null and companyName!=""'>
+                              AND COMPANY_NAME LIKE CONCAT('%',#{companyName},'%') AND PROJECT_NAME LIKE CONCAT('%',#{projectName},'%')
+                          </when>
+                          <otherwise>
+                              AND PROJECT_NAME LIKE CONCAT('%',#{projectName},'%')
+                          </otherwise>
+                      </choose>
+                  </when>
+                  <when test='companyName!=null and companyName!=""'>
+                      <choose>
+                          <when test='projectName!=null and projectName!=""'>
+                              AND COMPANY_NAME LIKE CONCAT('%',#{companyName},'%')  AND COMPANY_NAME LIKE CONCAT('%',#{companyName},'%')
+                          </when>
+                          <otherwise>
+                              AND COMPANY_NAME LIKE CONCAT('%',#{companyName},'%')
+                          </otherwise>
+                      </choose>
+                  </when>
+                  <otherwise>
+                      AND 0=1
+                  </otherwise>
+              </choose>
+          </where>
+    </select>
+</mapper>    

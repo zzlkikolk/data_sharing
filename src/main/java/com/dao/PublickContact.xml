@@ -1,0 +1,135 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.PublickContactDao">
+    <select id="getPublickContact" resultType="com.bean.PublickContact">
+        SELECT
+            FK_ID,
+            ID,
+            COUNTRY_CODE,
+            PROJECT_PRINCIPAL,
+            PROJECT_PRINCIPAL_PHONE,
+            PROJECT_PRINCIPAL_JOB,
+            PROJECT_PRINCIPAL_EMAIL,
+            PROJECT_PRINCIPAL_QQ,
+            PROJECT_PRINCIPAL_WECHAT,
+            PROJECT_CONTACT,
+            PROJECT_CONTACT_PHONE,
+            PROJECT_CONTACT_EMAIL,
+            PROJECT_CONTACT_QQ,
+            PROJECT_CONTACT_WECHAT,
+            CREATE_TIME,
+
+            DECODE(UPDATETIME,NULL,CREATE_TIME,UPDATETIME) UPDATETIME
+            FROM WXB.PUBLIC_CONTACT
+            <where>
+             <!-- <choose>
+                <when test='country_code!=null and country_code!=""'>
+                    AND COUNTRY_CODE LIKE CONCAT('%',#{country_code},'%')
+                </when>
+                <when test='fk_id!=null and fk_id!=""'>
+                   AND FK_ID like CONCAT('%',#{fk_id},'%')
+                </when>
+                <when test='start_time!=null and end_time!=null and start_time!="" and end_time!=""'>
+                    AND (CREATE_TIME BETWEEN #{start_time} and #{end_time})
+                    OR (UPDATETIME BETWEEN #{strat_time} and #{end_time})
+                </when>
+                <otherwise>
+                    AND 0=1
+                </otherwise>
+              </choose> -->
+                <choose>
+                    <when test='todaytime!=null and todaytime!=" "'>
+                        AND DATA_FLAG!=3 AND CREATE_TIME  <![CDATA[ >= ]]> #{todaytime} ORDER BY CREATE_TIME
+                    </when>
+                    <otherwise>
+                        AND 0=1
+                    </otherwise>
+                </choose>
+            </where>
+    </select>
+
+    <select id="getCount" resultType="int">
+        SELECT COUNT(1) FROM WXB.PUBLIC_CONTACT WHERE DATA_FLAG!=3
+    </select>
+
+    <select id="getPublicContactByArgs" resultType="com.bean.PublickContact">
+                SELECT
+            FK_ID,
+            ID,
+            COUNTRY_CODE,
+            PROJECT_PRINCIPAL,
+            PROJECT_PRINCIPAL_PHONE,
+            PROJECT_PRINCIPAL_JOB,
+            PROJECT_PRINCIPAL_EMAIL,
+            PROJECT_PRINCIPAL_QQ,
+            PROJECT_PRINCIPAL_WECHAT,
+            PROJECT_CONTACT,
+            PROJECT_CONTACT_PHONE,
+            PROJECT_CONTACT_EMAIL,
+            PROJECT_CONTACT_QQ,
+            PROJECT_CONTACT_WECHAT,
+            CREATE_TIME,
+
+            DECODE(UPDATETIME,NULL,CREATE_TIME,UPDATETIME) UPDATETIME
+            FROM WXB.PUBLIC_CONTACT
+            <where>
+                <choose>
+                    <when test='projectPrincipal!=null'>
+                          AND PROJECT_PRINCIPAL=#{projectPrincipal} AND DATA_FLAG!=3
+                      <if test="projectPrincipalPhone!=null">
+                          AND PROJECT_PRINCIPAL_PHONE=#{projectPrincipalPhone}
+                      </if>
+                      <if test="projectContact!=null">
+                          AND PROJECT_CONTACT=#{projectContact}
+                      </if>
+                      <if  test="projectContactPhone!=null">
+                          AND PROJECT_CONTACT_PHONE=#{projectContactPhone}
+                      </if>
+                    </when>
+
+                    <when test="projectPrincipalPhone!=null">
+                        AND PROJECT_PRINCIPAL_PHONE=#{projectPrincipalPhone} AND DATA_FLAG!=3
+                        <if test='projectPrincipal!=null'>
+                            AND PROJECT_PRINCIPAL=#{projectPrincipal}
+                        </if>
+                        <if test="projectContact!=null">
+                            AND PROJECT_CONTACT=#{projectContact}
+                        </if>
+                        <if test="projectContactPhone!=null">
+                            AND PROJECT_CONTACT_PHONE=#{projectContactPhone}
+                        </if>
+                    </when>
+
+                    <when test="projectContact!=null">
+                        AND PROJECT_CONTACT=#{projectContact} AND DATA_FLAG!=3
+                        <if test="projectContactPhone!=null">
+                            AND PROJECT_CONTACT_PHONE=#{projectContactPhone}
+                        </if>
+                        <if test='projectPrincipal!=null'>
+                            AND PROJECT_PRINCIPAL=#{projectPrincipal}
+                        </if>
+                        <if test="projectPrincipalPhone!=null">
+                            AND PROJECT_PRINCIPAL_PHONE=#{projectPrincipalPhone}
+                        </if>
+                    </when>
+
+                    <when test="projectContactPhone!=null">
+                        AND PROJECT_CONTACT_PHONE=#{projectContactPhone} AND DATA_FLAG!=3
+                        <if test='projectPrincipal!=null'>
+                            AND PROJECT_PRINCIPAL=#{projectPrincipal}
+                        </if>
+                        <if test="projectPrincipalPhone!=null">
+                            AND PROJECT_PRINCIPAL_PHONE=#{projectPrincipalPhone}
+                        </if>
+                        <if test="projectContact!=null">
+                            AND PROJECT_CONTACT=#{projectContact}
+                        </if>
+                    </when>
+                    <otherwise>
+                        AND 0=1
+                    </otherwise>
+                </choose>
+            </where>
+    </select>
+</mapper>
